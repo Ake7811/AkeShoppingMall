@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
     return OutlineButton(
       child: Text('Sign Up'),
       onPressed: () {
-        print('You Click Sign Up');
+        //print('You Click Sign Up');
         MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => Register());
         Navigator.of(context).push(materialPageRoute);
 
