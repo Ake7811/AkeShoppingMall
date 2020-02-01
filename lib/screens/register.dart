@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -9,6 +10,8 @@ class _RegisterState extends State<Register> {
   //Explicit
   final formKey = GlobalKey<FormState>();
 
+  String nameString, emailString, passwordString;
+
   // Method
   Widget registerButton() {
     return IconButton(
@@ -17,9 +20,54 @@ class _RegisterState extends State<Register> {
         print('You Click Upload');
         if (formKey.currentState.validate()) {
           formKey.currentState.save();
+          print(
+              'name=$nameString, email=$emailString, password=$passwordString');
+          registerThread();
         }
       },
     );
+  }
+
+  Future<void> registerThread() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .createUserWithEmailAndPassword(
+            email: emailString, password: passwordString)
+        .then((response) {
+      print('Register success for email=$emailString');
+    }).catchError((response) {
+      String title = response.code;
+      String message = response.message;
+      //print('Title = $title , Message = $message');
+      myAlert(title, message);
+    });
+  }
+
+  void myAlert(String title, String message) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: ListTile(
+              leading: Icon(
+                Icons.add_alert,
+                color: Colors.red,size: 48.0,
+              ),
+              title: Text(
+                title,
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            content: Text(message),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 
   Widget nameText() {
@@ -48,6 +96,9 @@ class _RegisterState extends State<Register> {
         } else {
           return null;
         }
+      },
+      onSaved: (String value) {
+        nameString = value.trim();
       },
     );
   }
@@ -80,6 +131,9 @@ class _RegisterState extends State<Register> {
           return null;
         }
       },
+      onSaved: (String value) {
+        emailString = value.trim();
+      },
     );
   }
 
@@ -102,12 +156,16 @@ class _RegisterState extends State<Register> {
           color: Colors.blue,
           fontStyle: FontStyle.italic,
         ),
-      ),validator: (String value) {
+      ),
+      validator: (String value) {
         if (value.length < 6) {
           return 'Password More than 6 Charectors';
         } else {
           return null;
         }
+      },
+      onSaved: (String value) {
+        passwordString = value.trim();
       },
     );
   }

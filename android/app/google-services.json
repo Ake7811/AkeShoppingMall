@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1019101264623",
+    "firebase_url": "https://akeshoppingmall.firebaseio.com",
+    "project_id": "akeshoppingmall",
+    "storage_bucket": "akeshoppingmall.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019101264623:android:baca3ca910bb173b88791a",
+        "android_client_info": {
+          "package_name": "com.example.akeshoppingmall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1019101264623-i3am65te8uaiat2u4vtmr6i8oi6hgqa4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyV41HGejkKL_wA7ygDynHTTm18E2JvwM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1019101264623-i3am65te8uaiat2u4vtmr6i8oi6hgqa4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
