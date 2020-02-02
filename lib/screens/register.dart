@@ -1,3 +1,4 @@
+import 'package:akeshoppingmall/screens/my_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -35,11 +36,26 @@ class _RegisterState extends State<Register> {
             email: emailString, password: passwordString)
         .then((response) {
       print('Register success for email=$emailString');
+      setupDisplayName();
     }).catchError((response) {
       String title = response.code;
       String message = response.message;
       //print('Title = $title , Message = $message');
       myAlert(title, message);
+    });
+  }
+
+  Future<void> setupDisplayName() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.currentUser().then((response) {
+      UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+      userUpdateInfo.displayName = nameString;
+      response.updateProfile(userUpdateInfo);
+
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
     });
   }
 
@@ -51,7 +67,8 @@ class _RegisterState extends State<Register> {
             title: ListTile(
               leading: Icon(
                 Icons.add_alert,
-                color: Colors.red,size: 48.0,
+                color: Colors.red,
+                size: 48.0,
               ),
               title: Text(
                 title,
@@ -61,7 +78,8 @@ class _RegisterState extends State<Register> {
             content: Text(message),
             actions: <Widget>[
               FlatButton(
-                child: Text('OK'),onPressed: () {
+                child: Text('OK'),
+                onPressed: () {
                   Navigator.of(context).pop();
                 },
               )
