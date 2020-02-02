@@ -1,4 +1,7 @@
+import 'package:akeshoppingmall/screens/authen.dart';
+import 'package:akeshoppingmall/screens/my_service.dart';
 import 'package:akeshoppingmall/screens/register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -8,6 +11,23 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 //Method
+
+  @override
+  void initState() {
+    super.initState();
+    checkStatus();
+  }
+
+  Future<void> checkStatus() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    if (firebaseUser != null) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
+    }
+  }
 
   Widget showLogo() {
     return Container(
@@ -37,7 +57,10 @@ class _HomeState extends State<Home> {
         'Sign In',
         style: TextStyle(color: Colors.white),
       ),
-      onPressed: () {},
+      onPressed: () {
+        MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context)=> Authen());
+        Navigator.of(context).push(materialPageRoute);
+      },
     );
   }
 
@@ -46,9 +69,9 @@ class _HomeState extends State<Home> {
       child: Text('Sign Up'),
       onPressed: () {
         //print('You Click Sign Up');
-        MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => Register());
+        MaterialPageRoute materialPageRoute =
+            MaterialPageRoute(builder: (BuildContext context) => Register());
         Navigator.of(context).push(materialPageRoute);
-
       },
     );
   }
