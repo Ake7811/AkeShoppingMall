@@ -1,5 +1,7 @@
+import 'package:akeshoppingmall/screens/my_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Authen extends StatefulWidget {
   @override
@@ -8,13 +10,16 @@ class Authen extends StatefulWidget {
 
 class _AuthenState extends State<Authen> {
   // Explicit
+  final formKey = GlobalKey<FormState>();
+  String emailString, passwordString;
 
   // Method
   Widget backButton() {
     return IconButton(
       icon: Icon(
         Icons.navigate_before,
-        size: 36.0,color: Colors.blue.shade700,
+        size: 36.0,
+        color: Colors.blue.shade700,
       ),
       onPressed: () {
         Navigator.of(context).pop();
@@ -24,11 +29,14 @@ class _AuthenState extends State<Authen> {
 
   Widget content() {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        showAppName(),
-        emailText(),
-        passwordText(),
-      ]),
+      child: Form(
+        key: formKey,
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          showAppName(),
+          emailText(),
+          passwordText(),
+        ]),
+      ),
     );
   }
 
@@ -75,6 +83,9 @@ class _AuthenState extends State<Authen> {
             labelStyle: TextStyle(
               color: Colors.blue.shade700,
             )),
+        onSaved: (String value) {
+          emailString = value.trim();
+        },
       ),
     );
   }
@@ -94,8 +105,65 @@ class _AuthenState extends State<Authen> {
             labelStyle: TextStyle(
               color: Colors.blue.shade700,
             )),
+        onSaved: (String value) {
+          passwordString = value.trim();
+        },
       ),
     );
+  }
+
+  Future<void> checkAuthen() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .signInWithEmailAndPassword(
+            email: emailString, password: passwordString)
+        .then((response) {
+      print('Authen Success');
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
+    }).catchError((response) {
+      String title = response.code;
+      String message = response.message;
+      myAlert(title, message);
+    });
+  }
+
+  Widget showTitle(String title) {
+    return ListTile(
+      leading: Icon(
+        Icons.add_alert,
+        size: 48.0,
+        color: Colors.red,
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+            color: Colors.red, fontSize: 18.0, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget okButton() {
+    return FlatButton(
+      child: Text('OK'),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  void myAlert(String title, String message) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: showTitle(title),
+            content: Text(message),
+            actions: <Widget>[okButton()],
+          );
+        });
   }
 
   @override
@@ -105,7 +173,8 @@ class _AuthenState extends State<Authen> {
         child: Container(
           decoration: BoxDecoration(
               gradient: RadialGradient(
-            colors: [Colors.white, Colors.yellow.shade800],radius: 1.0,
+            colors: [Colors.white, Colors.yellow.shade800],
+            radius: 1.0,
           )),
           child: Stack(
             children: <Widget>[
@@ -121,7 +190,11 @@ class _AuthenState extends State<Authen> {
           Icons.navigate_next,
           size: 36.0,
         ),
-        onPressed: () {},
+        onPressed: () {
+          formKey.currentState.save();
+          print('Email=$emailString , Password = $passwordString');
+          checkAuthen();
+        },
       ),
     );
   }
